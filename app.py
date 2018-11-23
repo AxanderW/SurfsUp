@@ -104,8 +104,13 @@ def temperatures ():
     # Return date, temperatures in .json
     return jsonify(tobs_dict)
 
+@app.route("/api/v1.0/<start>")
+def temperatures_by_start_date(start_date):
+    return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+         filter(Measurement.date == start_date).all()
+
 @app.route("/api/v1.0/<start>/<end>")
-def temperatures_by_date(start_date, end_date):
+def temperatures_by_full_date(start_date, end_date):
     return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
          filter(Measurement.date >= start_date).filter(
          Measurement.date <= end_date).all()
