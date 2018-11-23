@@ -2,7 +2,7 @@
 
 ![surfs-up-mikey.jpeg](Images/surfs-up-mikey.jpeg)
 
-Congratulations! You've decided to treat yourself to a long holiday vacation in Honolulu, Hawaii! The scripts in this file will help with your trip planning, with someclimate analysis on the area. This script provides the following:
+Congratulations! You've decided to treat yourself to a long holiday vacation in Honolulu, Hawaii! The scripts in this file will help with your trip planning by providing some climate analysis on the area. This script provides the following:
 
 ## Climate Analysis and Exploration
 
