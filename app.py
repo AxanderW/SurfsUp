@@ -64,7 +64,7 @@ def welcome():
           "/api/v1.0/stations <br>"
           "/api/v1.0/tobs <br>"
           "/api/v1.0/start_date <br>"
-          "/api/v1.0/start_date/end_date"
+          "/api/v1.0/start_date/<start_date>/end_date/<end_date>"
           
     )
 @app.route("/api/v1.0/precipitation")
@@ -90,14 +90,7 @@ def precipitation():
     filter(Measurement.date.between(prev_year, lastest_dt)).\
     filter(Measurement.station == most_active_station).all()
 
-    # Convert tobs to a dict
-    prcp_dict = {}
-
-    for rain in prcps:
-        prcp_dict[rain[0]] = rain[1]
-    
-    # Return date, temperatures in .json
-    return jsonify(prcp_dict)
+    return jsonify(prcps)
 
 @app.route("/api/v1.0/stations")
 
@@ -138,14 +131,7 @@ def temperatures ():
     filter(Measurement.date.between(prev_year, lastest_dt)).\
     filter(Measurement.station == most_active_station).all()
 
-    # Convert tobs to a dict
-    tobs_dict = {}
-
-    for temp in tobs:
-        tobs_dict[temp[0]] = temp[1]
-    
-    # Return date, temperatures in .json
-    return jsonify(tobs_dict)
+    return jsonify(tobs)
 
 @app.route("/api/v1.0/start_date/<start_date>")
 
@@ -154,23 +140,25 @@ def temperatures_by_start_date(start_date):
     engine = create_engine("sqlite:///Resources/hawaii.sqlite")
     Base = automap_base()
     Base.prepare(engine, reflect=True)
+ 
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+         filter(Measurement.date == start_date).all()
 
-    tobs = session.query(Measurement.date, Measurement.tobs) .\
-    filter(Measurement.date == start_date)
+    return jsonify(results)
 
-    return jsonify(tobs)
-
-    
-    ##    return "Date found"
-        #return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-         #filter(Measurement.date == start_date).all()
-
-@app.route("/api/v1.0/<start>/<end>")
+@app.route("/api/v1.0/start_date/<start_date>/end_date/<end_date>")
 
 def temperatures_by_full_date(start_date, end_date):
-    return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+
+    engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+    Base = automap_base()
+    Base.prepare(engine, reflect=True)
+
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
          filter(Measurement.date >= start_date).filter(
          Measurement.date <= end_date).all()
+    
+    return jsonify(results)
 
 
 if __name__ == "__main__":
